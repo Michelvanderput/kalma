@@ -1,24 +1,17 @@
 import { useState } from 'react'
+import { AnimatePresence, MotionConfig, motion } from 'motion/react'
+import { House, Sparkles, UserRound } from 'lucide-react'
+import { Toaster } from '@/components/ui/sonner'
+import { cn } from '@/lib/utils'
 import Today from './screens/Today.jsx'
 import Urge from './screens/Urge.jsx'
 import Proof from './screens/Proof.jsx'
 import Settings from './screens/Settings.jsx'
 
-const ICONS = {
-  today: <path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1z" />,
-  proof: <path d="M12 3.5 14.6 9l6 .7-4.5 4.1 1.2 5.9L12 16.8l-5.3 2.9 1.2-5.9L3.4 9.7l6-.7z" />,
-  settings: (
-    <>
-      <circle cx="12" cy="8.5" r="3.75" />
-      <path d="M4.5 20c.8-3.7 3.8-5.75 7.5-5.75s6.7 2.05 7.5 5.75" />
-    </>
-  ),
-}
-
 const TABS = [
-  { id: 'today', label: 'Vandaag' },
-  { id: 'proof', label: 'Bewijs' },
-  { id: 'settings', label: 'Ik' },
+  { id: 'today', label: 'Vandaag', Icon: House },
+  { id: 'proof', label: 'Bewijs', Icon: Sparkles },
+  { id: 'settings', label: 'Ik', Icon: UserRound },
 ]
 
 // De snelkoppeling op het app-icoon opent /?drang=1 en gaat meteen naar het protocol.
@@ -33,30 +26,59 @@ export default function App() {
   const [tab, setTab] = useState('today')
   const [urgeOpen, setUrgeOpen] = useState(openedFromShortcut)
 
-  if (urgeOpen) return <Urge onClose={() => setUrgeOpen(false)} />
-
   return (
-    <div className="app">
-      <main className="screen" key={tab}>
-        {tab === 'today' && <Today onUrge={() => setUrgeOpen(true)} goTo={setTab} />}
-        {tab === 'proof' && <Proof />}
-        {tab === 'settings' && <Settings />}
-      </main>
-      <nav className="tabs">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            className={tab === t.id ? 'active' : ''}
-            aria-current={tab === t.id ? 'page' : undefined}
-            onClick={() => setTab(t.id)}
+    <MotionConfig reducedMotion="user">
+      <Toaster position="top-center" />
+      {urgeOpen ? (
+        <Urge onClose={() => setUrgeOpen(false)} />
+      ) : (
+        <div className="mx-auto min-h-dvh w-full max-w-xl">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.main
+              key={tab}
+              className="flex flex-col gap-4 px-4 pt-6 pb-36 sm:px-6 sm:pt-10"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+            >
+              {tab === 'today' && <Today onUrge={() => setUrgeOpen(true)} goTo={setTab} />}
+              {tab === 'proof' && <Proof />}
+              {tab === 'settings' && <Settings />}
+            </motion.main>
+          </AnimatePresence>
+
+          <nav
+            aria-label="Hoofdmenu"
+            className="fixed inset-x-0 bottom-[calc(12px+env(safe-area-inset-bottom))] z-40 mx-auto flex w-[min(34rem,calc(100%-2rem))] gap-1 rounded-[1.4rem] border bg-card/80 p-1.5 shadow-soft backdrop-blur-xl"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              {ICONS[t.id]}
-            </svg>
-            {t.label}
-          </button>
-        ))}
-      </nav>
-    </div>
+            {TABS.map(({ id, label, Icon }) => {
+              const active = tab === id
+              return (
+                <button
+                  key={id}
+                  onClick={() => setTab(id)}
+                  aria-current={active ? 'page' : undefined}
+                  className={cn(
+                    'relative flex min-h-13 flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-2xl text-xs font-semibold text-muted-foreground transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',
+                    active && 'text-secondary-foreground',
+                  )}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="tab-pill"
+                      className="absolute inset-0 rounded-2xl bg-secondary"
+                      transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                    />
+                  )}
+                  <Icon className="relative size-5" strokeWidth={active ? 2.4 : 1.9} aria-hidden="true" />
+                  <span className="relative">{label}</span>
+                </button>
+              )
+            })}
+          </nav>
+        </div>
+      )}
+    </MotionConfig>
   )
 }

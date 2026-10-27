@@ -1,0 +1,112 @@
+{
+  "schema": "dashy/avatar-definition",
+  "schemaVersion": 2,
+  "name": "Dashy",
+  "shape": "circle",
+  "colors": {
+    "body": "#ffffff",
+    "eyes": "#101214",
+    "outline": "#c9c9c4",
+    "blush": "#ff8fa3",
+    "mouth": "#101214",
+    "accent": "#ff5c7a"
+  },
+  "style": {
+    "roundness": 1,
+    "outlineWidth": 1,
+    "eyeWidth": 34,
+    "eyeSpacing": 34,
+    "eyeScale": 0.833,
+    "eyeRoundness": 1,
+    "shine": 0,
+    "mouth": true,
+    "blush": "auto",
+    "effects": true,
+    "shadow": true
+  },
+  "motion": {
+    "ambient": 1,
+    "perspective": 1,
+    "speed": 1,
+    "bounce": 1,
+    "followPointer": true,
+    "blink": {
+      "enabled": true,
+      "minMs": 2000,
+      "maxMs": 5200
+    }
+  },
+  "expressions": {
+    "smug": {
+      "state": "idle",
+      "look": {
+        "cover": 0.45,
+        "lidA": -6,
+        "low": 0.2,
+        "sd": 0,
+        "eh": 62,
+        "tilt": 0,
+        "asym": 0.15
+      },
+      "decor": {
+        "mouth": 0.5,
+        "blush": 0.2,
+        "fx": "none"
+      }
+    }
+  },
+  "sequences": {
+    "hallo": {
+      "mode": "once",
+      "steps": [
+        {
+          "expression": "surprised",
+          "holdMs": 500,
+          "transitionMs": 150,
+          "ease": "snappy"
+        },
+        {
+          "expression": "happy",
+          "holdMs": 900,
+          "transitionMs": 250,
+          "ease": "spring"
+        },
+        {
+          "expression": "wink",
+          "holdMs": 700,
+          "transitionMs": 200,
+          "ease": "snappy"
+        },
+        {
+          "expression": "idle",
+          "holdMs": 400,
+          "transitionMs": 300,
+          "ease": "smooth"
+        }
+      ]
+    },
+    "denkpauze": {
+      "mode": "loop",
+      "steps": [
+        {
+          "expression": "thinking",
+          "holdMs": 1400,
+          "transitionMs": 300,
+          "ease": "smooth"
+        },
+        {
+          "expression": "confused",
+          "holdMs": 900,
+          "transitionMs": 250,
+          "ease": "spring"
+        },
+        {
+          "expression": "curious",
+          "holdMs": 900,
+          "transitionMs": 250,
+          "ease": "spring"
+        }
+      ]
+    }
+  }
+}

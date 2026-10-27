@@ -11,6 +11,14 @@ Een persoonlijke app voor rust en vertrouwen: het moment tussen impuls en actie 
 
 Alle data staat lokaal op het toestel (IndexedDB). Er gaat niets naar een server.
 
+## Dashy
+
+Dashy komt uit Dashy Studio (`src/dashy/dashy.js` en `dashy.json`, export van het pakket). De runtime animeert zelf, volgt de aanwijzer, reageert op tikken en respecteert `prefers-reduced-motion`. In Kalma reageert Dashy op het moment: zwaaien bij openen, blij of trots na een check-in, slaperig 's nachts, meeademen tijdens de drangknop en juichen bij een gewonnen moment. Een nieuwe export uit de studio vervangt simpelweg die twee bestanden.
+
+## Stack
+
+Vite + React, Vite PWA, Tailwind CSS, shadcn/ui (Radix), Lucide, Motion, Sonner en Figtree via Fontsource. Nieuwe shadcn-componenten voeg je toe met `npx shadcn@latest add <naam>`. Let op: controleer daarna het importpad van `cn` (`@/lib/utils`).
+
 ## Draaien
 
 ```bash

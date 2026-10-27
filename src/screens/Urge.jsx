@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useStore, loadVoice } from '../store.jsx'
+import { useStore } from '../store.jsx'
 import { Chips, Scale } from '../components.jsx'
 import { uid, whatsappNumber } from '../utils.js'
 
@@ -89,18 +89,6 @@ export default function Urge({ onClose }) {
 }
 
 function Message({ settings, onNext }) {
-  const [voiceUrl, setVoiceUrl] = useState(null)
-
-  useEffect(() => {
-    let url
-    loadVoice().then((blob) => {
-      if (!blob) return
-      url = URL.createObjectURL(blob)
-      setVoiceUrl(url)
-    })
-    return () => url && URL.revokeObjectURL(url)
-  }, [])
-
   return (
     <section className="urge-step">
       <p className="eyebrow">Je drukte op de knop. Dat is al winnen.</p>
@@ -112,7 +100,6 @@ function Message({ settings, onNext }) {
           doorkomen.
         </blockquote>
       )}
-      {voiceUrl && <audio controls autoPlay src={voiceUrl} className="voice" />}
       <button className="primary" onClick={onNext}>
         Verder
       </button>

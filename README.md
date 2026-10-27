@@ -4,10 +4,10 @@ Een persoonlijke app voor rust en vertrouwen: het moment tussen impuls en actie 
 
 ## Versie 1
 
-- **Drangknop**: een protocol van tien minuten. Eerst je eigen bericht (tekst en/of spraak), dan drangniveau en wat eronder zit, dan ademen met een timer en één tik naar je buddy. Elk doorstaan moment komt in het Bewijsarchief.
+- **Drangknop**: een protocol van tien minuten. Eerst je eigen bericht, dan drangniveau en wat eronder zit, dan ademen met een timer en één tik naar je buddy. Elk doorstaan moment komt in het Bewijsarchief.
 - **Check-in**: 's ochtends slaap, energie, drang en één intentie. 's Avonds waar je trots op bent, wat moeilijk was en je toch deed, je sterkste drang en hoeveel je gescrold hebt.
 - **Bewijsarchief**: alles wat je wint, plus zelf toegevoegde complimenten, nagekomen beloftes en lastige gesprekken.
-- **Ik**: instellingen, spraakbericht, terugval zonder je geschiedenis te wissen, hulplinks en een back-up.
+- **Ik**: instellingen, terugval zonder je geschiedenis te wissen, hulplinks en een back-up.
 
 Alle data staat lokaal op het toestel (IndexedDB). Er gaat niets naar een server.
 

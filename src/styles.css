@@ -219,10 +219,6 @@ input[type='range'] {
   background: transparent;
   color: var(--muted);
 }
-.recording {
-  background: var(--urge);
-  color: var(--urge-ink);
-}
 .link {
   border: 0;
   background: none;
@@ -320,9 +316,6 @@ input[type='range'] {
   border-radius: 0 var(--radius) var(--radius) 0;
   font-size: 1.2rem;
   white-space: pre-wrap;
-}
-.voice {
-  width: 100%;
 }
 
 .breath {

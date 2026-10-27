@@ -38,6 +38,3 @@ export function StoreProvider({ children }) {
 }
 
 export const useStore = () => useContext(StoreContext)
-
-export const loadVoice = () => get('voice')
-export const saveVoice = (blob) => set('voice', blob)

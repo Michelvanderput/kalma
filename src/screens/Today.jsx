@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { useStore } from '../store.jsx'
 import { Chips, Scale } from '../components.jsx'
+import Companion from '../Companion.jsx'
 import { daysSince, greeting, todayKey, uid } from '../utils.js'
+
+// Vanaf dit uur maakt de ochtendcheck-in plaats voor de avond.
+const EVENING_HOUR = 17
 
 export default function Today({ onUrge, goTo }) {
   const { data, change } = useStore()
@@ -9,31 +13,40 @@ export default function Today({ onUrge, goTo }) {
   const key = todayKey()
   const day = checkins[key] ?? {}
   const clean = settings.cleanSince ? daysSince(settings.cleanSince) : null
+  const hour = new Date().getHours()
+  const evening = hour >= EVENING_HOUR
+  const mood = hour >= 22 || hour < 6 ? 'slaperig' : day.evening ? 'trots' : day.morning ? 'blij' : 'rust'
 
   const saveCheckin = (part, values) =>
     change('checkins', (all) => ({ ...all, [key]: { ...all[key], [part]: { ...values, at: Date.now() } } }))
 
+  // Bij aanpassen vervangen we de bewijsstukken van deze avond, zodat er geen dubbele ontstaan.
   const saveEvening = (values) => {
     saveCheckin('evening', values)
     const at = Date.now()
+    const from = `evening:${key}`
     const entries = [
-      values.proud && { id: uid(), at, type: 'trots', text: values.proud },
-      values.hard && { id: uid(), at, type: 'moeilijk', text: values.hard },
+      values.proud && { id: uid(), at, from, type: 'trots', text: values.proud },
+      values.hard && { id: uid(), at, from, type: 'moeilijk', text: values.hard },
     ].filter(Boolean)
-    if (entries.length) change('proof', (list) => [...list, ...entries])
+    change('proof', (list) => [...list.filter((p) => p.from !== from), ...entries])
   }
 
   return (
     <>
-      <header className="hero">
-        <p className="eyebrow">{greeting(settings.name)}</p>
-        {clean !== null ? (
-          <h1>
-            <span className="big-number">{clean}</span> dagen vrij
-          </h1>
-        ) : (
-          <h1>Welkom bij Kalma</h1>
-        )}
+      <header className="hero hero-row">
+        <div>
+          <p className="eyebrow">{greeting(settings.name)}</p>
+          {clean !== null ? (
+            <h1>
+              <span className="big-number">{clean}</span>
+              <span className="big-label">dagen vrij</span>
+            </h1>
+          ) : (
+            <h1>Welkom bij Kalma</h1>
+          )}
+        </div>
+        <Companion mood={mood} />
       </header>
 
       <button className="urge-button" onClick={onUrge}>
@@ -51,35 +64,55 @@ export default function Today({ onUrge, goTo }) {
         </section>
       )}
 
-      {day.morning ? (
-        <DoneCard title="Ochtend" text={day.morning.intention ? `Intentie: ${day.morning.intention}` : 'Ingevuld.'} />
-      ) : (
-        <MorningForm onSave={(v) => saveCheckin('morning', v)} />
+      {(!evening || day.morning) && (
+        <Checkin
+          done={day.morning}
+          summary={(m) => (m.intention ? `Intentie: ${m.intention}` : 'Ingevuld.')}
+          title="Ochtend"
+          Form={MorningForm}
+          onSave={(v) => saveCheckin('morning', v)}
+        />
       )}
 
-      {day.evening ? (
-        <DoneCard title="Avond" text="Ingevuld. Goed gedaan dat je de dag afsluit." />
+      {evening ? (
+        <Checkin
+          done={day.evening}
+          summary={() => 'Dag afgesloten. Goed gedaan.'}
+          title="Avond"
+          Form={EveningForm}
+          onSave={saveEvening}
+        />
       ) : (
-        <EveningForm onSave={saveEvening} />
+        <p className="muted hint">De avondcheck-in verschijnt om {EVENING_HOUR}:00.</p>
       )}
     </>
   )
 }
 
-function DoneCard({ title, text }) {
-  return (
-    <section className="card done">
-      <h2>{title}</h2>
-      <p>{text}</p>
-    </section>
-  )
+function Checkin({ done, summary, title, Form, onSave }) {
+  const [editing, setEditing] = useState(false)
+
+  if (done && !editing) {
+    return (
+      <section className="card done">
+        <div className="card-head">
+          <h2>{title}</h2>
+          <button className="link" onClick={() => setEditing(true)}>
+            Aanpassen
+          </button>
+        </div>
+        <p>{summary(done)}</p>
+      </section>
+    )
+  }
+  return <Form initial={done} onSave={(v) => (onSave(v), setEditing(false))} />
 }
 
-function MorningForm({ onSave }) {
-  const [sleep, setSleep] = useState(3)
-  const [energy, setEnergy] = useState(5)
-  const [urge, setUrge] = useState(2)
-  const [intention, setIntention] = useState('')
+function MorningForm({ initial = {}, onSave }) {
+  const [sleep, setSleep] = useState(initial.sleep ?? 3)
+  const [energy, setEnergy] = useState(initial.energy ?? 5)
+  const [urge, setUrge] = useState(initial.urge ?? 2)
+  const [intention, setIntention] = useState(initial.intention ?? '')
 
   return (
     <form className="card" onSubmit={(e) => (e.preventDefault(), onSave({ sleep, energy, urge, intention }))}>
@@ -96,11 +129,11 @@ function MorningForm({ onSave }) {
   )
 }
 
-function EveningForm({ onSave }) {
-  const [proud, setProud] = useState('')
-  const [hard, setHard] = useState('')
-  const [urge, setUrge] = useState(2)
-  const [scroll, setScroll] = useState('normaal')
+function EveningForm({ initial = {}, onSave }) {
+  const [proud, setProud] = useState(initial.proud ?? '')
+  const [hard, setHard] = useState(initial.hard ?? '')
+  const [urge, setUrge] = useState(initial.urge ?? 2)
+  const [scroll, setScroll] = useState(initial.scroll ?? 'normaal')
 
   return (
     <form className="card" onSubmit={(e) => (e.preventDefault(), onSave({ proud, hard, urge, scroll }))}>

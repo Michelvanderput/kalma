@@ -18,6 +18,15 @@ export default defineConfig({
         display: 'standalone',
         start_url: '/',
         icons: [{ src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
+        // Lang drukken op het app-icoon (Android) geeft direct de drangknop.
+        shortcuts: [
+          {
+            name: 'Ik voel drang',
+            short_name: 'Drang',
+            url: '/?drang=1',
+            icons: [{ src: 'icon.svg', sizes: 'any', type: 'image/svg+xml' }],
+          },
+        ],
       },
     }),
   ],

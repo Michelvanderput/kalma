@@ -41,6 +41,25 @@ export default function Settings() {
     setTimeout(() => URL.revokeObjectURL(a.href), 1000)
   }
 
+  const importData = async (e) => {
+    const file = e.target.files[0]
+    e.target.value = ''
+    if (!file) return
+    try {
+      const backup = JSON.parse(await file.text())
+      if (!backup.settings || !Array.isArray(backup.proof)) throw new Error('geen Kalma-back-up')
+      const date = backup.exportedAt ? new Date(backup.exportedAt).toLocaleDateString('nl-NL') : 'onbekende datum'
+      if (!confirm(`Back-up van ${date} terugzetten? Wat nu in de app staat wordt vervangen.`)) return
+      for (const key of ['settings', 'checkins', 'urges', 'proof']) {
+        if (backup[key]) change(key, () => backup[key])
+      }
+      setForm((f) => ({ ...f, ...backup.settings }))
+      alert('Back-up teruggezet.')
+    } catch {
+      alert('Dit bestand kan ik niet lezen als Kalma-back-up.')
+    }
+  }
+
   const streaks = data.settings.streaks ?? []
   const longest = Math.max(0, ...streaks.map((s) => s.days), data.settings.cleanSince ? daysSince(data.settings.cleanSince) : 0)
 
@@ -107,9 +126,15 @@ export default function Settings() {
       <section className="card">
         <h2>Je data</h2>
         <p className="muted">Alles staat alleen op dit toestel. Maak af en toe een back-up.</p>
-        <button className="secondary" onClick={exportData}>
-          Back-up downloaden
-        </button>
+        <div className="button-row">
+          <button className="secondary" onClick={exportData}>
+            Back-up downloaden
+          </button>
+          <label className="secondary">
+            Back-up terugzetten
+            <input type="file" accept="application/json,.json" onChange={importData} hidden />
+          </label>
+        </div>
       </section>
     </>
   )

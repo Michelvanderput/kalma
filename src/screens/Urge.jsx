@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useStore } from '../store.jsx'
 import { Chips, Scale } from '../components.jsx'
+import Companion from '../Companion.jsx'
 import { uid, whatsappNumber } from '../utils.js'
 
 const SURF_MINUTES = 10
@@ -73,6 +74,7 @@ export default function Urge({ onClose }) {
 
       {step === 5 && (
         <section className="urge-step center">
+          <Companion mood="trots" size={120} label="Kalma is trots op je" />
           <p className="eyebrow">Gewonnen</p>
           <h1 className="big-number">{urges.length}</h1>
           <p>
@@ -129,6 +131,7 @@ function Surf({ settings, onDone }) {
       <h1>Surf op de golf</h1>
       <p className="muted">Een drang komt op, piekt en zakt weer. Jij hoeft alleen te ademen.</p>
       <div className={inhale ? 'breath in' : 'breath out'}>
+        <Companion mood="rust" size={88} label="Kalma ademt met je mee" />
         <span>{inhale ? 'Adem in' : 'Adem uit'}</span>
       </div>
       <p className="timer" aria-live="off">
